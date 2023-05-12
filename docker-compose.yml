@@ -7,7 +7,7 @@ services:
     restart: always
     container_name: spark-master
     ports:
-      - "8080:8080"
+      - "10000:8080"
       - "7077:7077"
       - "4040:4040"
     environment:
@@ -53,16 +53,3 @@ services:
       - "SPARK_MASTER=spark://spark-master:7077"
     volumes:
       - ./app:/app
-
-  pyspark-notebook:
-    image: jupyter/pyspark-notebook:spark-3.2.0
-    restart: always
-    container_name: pyspark-notebook
-    depends_on:
-      - spark-master
-    ports:
-      - "8888:8888"
-    environment:
-      - "JUPYTER_TOKEN=easy"
-    volumes:
-      - ./app:/home/jovyan
