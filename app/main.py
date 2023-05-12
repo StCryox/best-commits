@@ -1,19 +1,18 @@
+from cmath import exp
 from time import sleep
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import sum, col, desc, to_date, months_between, current_date
-
-
+from pyspark.sql.functions import sum, col, desc, to_date, months_between, current_date, explode, split, trim, length
 
 # Initialisation de la SparkSession
 spark = SparkSession \
     .builder \
     .appName("project") \
-    .master("local[*]") \
+    .master("spark://spark-master:7077") \
     .config("spark.sql.legacy.timeParserPolicy","LEGACY") \
     .getOrCreate()
     
-
   #.master("spark://spark-master:7077") \
+  #.master("local[*]") \
 
  # Lecture du fichier
 data_file = "/app/data/full.csv"
@@ -57,16 +56,17 @@ best_contributors = df.where(col("repo") == "apache/spark") \
     .show()
 
 # Question 4
-# J'AI AJOUTER DU CODE MERDE
-        
-  
+stop_words_file = "/app/data/englishST.txt"
+stop_words = spark.read \
+    .load(stop_words_file , format="text")
 
-
-
-
-
-
-
-
+most_repeated_words = df.withColumn('word', explode(split(col('message'), ' ')))\
+    .filter(length(trim(col('word'))) > 0)\
+    .join(stop_words, col("word") == stop_words.value, 'left_anti')\
+    .groupBy("word") \
+    .count() \
+    .withColumnRenamed("count", "occurences") \
+    .orderBy(desc("occurences")) \
+    .show(10)
 
 sleep(1000)
