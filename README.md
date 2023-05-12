@@ -12,5 +12,5 @@
 - Launch the cluster : `/spark/bin/spark-submit /app/main.py`
 
 ## Monitoring
-- You can monitor what the jobs on this url : localhost:4040
+- You can monitor what the jobs on this url : [localhost:4040](http://localhost:4040/)
 - On your terminal where you launched the cluster you can check prints of the data processing.
