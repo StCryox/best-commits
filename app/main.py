@@ -33,7 +33,7 @@ df = (
     .csv(data_file)
 )
 
-cleaned_df = df.dropna()
+cleaned_df = df.dropna().cache()
 
 # Question 1
 most_commit_df = (
