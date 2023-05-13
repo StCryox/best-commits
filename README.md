@@ -1,9 +1,7 @@
 # SETUP
 
 ## Install dependencies
-- Install depency from requirements.txt
-- create a directory called data inside the app directory and put in the data files
-  - stopwords (englishST.txt): https://www.kaggle.com/datasets/rtatman/stopword-lists-for-19-languages?select=englishST.txt
+- create a directory called data inside the app directory and put in the data file
   - data (full.csv): https://www.kaggle.com/datasets/dhruvildave/github-commit-messages-dataset
 
 ## Run the app

@@ -3,7 +3,10 @@ name: esgi-cluster
 
 services:
   spark-master:
-    image: bde2020/spark-master:3.2.0-hadoop3.2
+    image: esgi-cluser/spark-master
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-master
     ports:
       - "10000:8080"

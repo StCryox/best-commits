@@ -18,15 +18,12 @@ from pyspark.ml.feature import StopWordsRemover, Tokenizer
 spark = (
     SparkSession.builder
     .appName("project")
-    .master("local[*]")
+    .master("spark://spark-master:7077")
     .config("spark.sql.legacy.timeParserPolicy", "LEGACY")
     .getOrCreate()
 )
 
-# .master("spark://spark-master:7077") \
 # .master("local[*]") \
-# .config("spark.sql.legacy.timeParserPolicy","LEGACY") \
-# .config("spark.executors.core", 4) \
 
 # Lecture du fichier
 data_file = "app/data/full.csv"
