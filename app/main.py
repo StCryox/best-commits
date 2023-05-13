@@ -1,6 +1,8 @@
 from time import sleep
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import (
+    ceil,
+    lit,
     col,
     desc,
     to_date,
@@ -16,7 +18,7 @@ from pyspark.ml.feature import StopWordsRemover, Tokenizer
 spark = (
     SparkSession.builder
     .appName("project")
-    .master("spark://spark-master:7077")
+    .master("local[*]")
     .config("spark.sql.legacy.timeParserPolicy", "LEGACY")
     .getOrCreate()
 )
@@ -27,11 +29,11 @@ spark = (
 # .config("spark.executors.core", 4) \
 
 # Lecture du fichier
-data_file = "/app/data/full.csv"
+data_file = "app/data/full.csv"
 df = (
     spark.read.option("header", "true")
     .option("inferSchema", "true")
-    .load(data_file, format="csv")
+    .csv(data_file)
 )
 
 cleaned_df = df.dropna()
@@ -56,7 +58,7 @@ date_format_pattern = "EEE MMM dd HH:mm:ss yyyy Z"
 best_contributors = (
     cleaned_df.where(col("repo") == "apache/spark")
     .withColumn("true_date", to_date(col("date"), date_format_pattern))
-    .filter(months_between(current_date(), col("true_date")) <= 48)
+    .filter(ceil(months_between(current_date(), col("true_date")) / lit(12)) <= 4)
     .groupBy("Author")
     .count()
     .withColumnRenamed("count", "commits")
