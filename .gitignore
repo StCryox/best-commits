@@ -1,3 +1,4 @@
 data/
 app/*
 !app/main.py
+!app/run.sh

@@ -1,4 +1,3 @@
-from cmath import exp
 from time import sleep
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import (
@@ -18,8 +17,7 @@ spark = (
     SparkSession.builder
     .appName("project")
     .master("spark://spark-master:7077")
-    .config("spark.sql.legacy.timeParserPolicy","LEGACY") \
-    .config("spark.executors.core", 4)
+    .config("spark.sql.legacy.timeParserPolicy", "LEGACY")
     .getOrCreate()
 )
 
@@ -30,7 +28,6 @@ spark = (
 
 # Lecture du fichier
 data_file = "/app/data/full.csv"
-
 df = (
     spark.read.option("header", "true")
     .option("inferSchema", "true")
