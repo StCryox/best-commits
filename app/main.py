@@ -1,22 +1,18 @@
-from cmath import exp
+from sre_parse import WHITESPACE
 from time import sleep
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import sum, col, desc, to_date, months_between, current_date, explode, split, trim, length
+from pyspark.sql.functions import col, desc, to_date, months_between, current_date, explode, split, trim, length
 
-# Initialisation de la SparkSession
 spark = SparkSession \
     .builder \
     .appName("project") \
-    .master("spark://spark-master:7077") \
+    .master("local[*]") \
     .config("spark.sql.legacy.timeParserPolicy","LEGACY") \
     .getOrCreate()
-    
-  #.master("spark://spark-master:7077") \
-  #.master("local[*]") \
 
- # Lecture du fichier
+    #.master("spark://spark-master:7077") \
+
 data_file = "/app/data/full.csv"
-
 df = spark.read \
     .option("header", "true") \
     .option("inferSchema", "true") \
@@ -24,16 +20,15 @@ df = spark.read \
 
 df.printSchema()
 
-cleaned_df = df.dropna()
-
 #Question 1
+cleaned_df = df.dropna()
 most_commit_df = cleaned_df.groupBy("repo") \
    .count() \
-   .orderBy("count", ascending=False) \
+   .orderBy(desc("count")) \
    .show(10)
 
 #Question 2
-best_contributor = cleaned_df.where(col("repo") == "apache/spark") \
+best_contributor = df.where(col("repo") == "apache/spark") \
    .groupBy("Author") \
    .count() \
    .withColumnRenamed("count", "commits") \
@@ -43,7 +38,10 @@ best_contributor = cleaned_df.where(col("repo") == "apache/spark") \
 #Question 3
 date_format_pattern = "EEE MMM dd HH:mm:ss yyyy Z"
 best_contributors = df.where(col("repo") == "apache/spark") \
-    .withColumn("true_date", to_date(col("date"), date_format_pattern)) \
+    .withColumn(
+        "true_date", 
+        to_date(col("date"), date_format_pattern)
+         ) \
     .filter(
         months_between(
             current_date(),
@@ -59,14 +57,15 @@ best_contributors = df.where(col("repo") == "apache/spark") \
 stop_words_file = "/app/data/englishST.txt"
 stop_words = spark.read \
     .load(stop_words_file , format="text")
+WHITESPACE = ' '
 
-most_repeated_words = df.withColumn('word', explode(split(col('message'), ' ')))\
+most_repeated_words = df.withColumn('word', explode(split(col('message'), WHITESPACE)))\
     .filter(length(trim(col('word'))) > 0)\
     .join(stop_words, col("word") == stop_words.value, 'left_anti')\
     .groupBy("word") \
     .count() \
-    .withColumnRenamed("count", "occurences") \
-    .orderBy(desc("occurences")) \
+    .withColumnRenamed("count", "occurrences") \
+    .orderBy(desc("occurrences")) \
     .show(10)
 
 sleep(1000)

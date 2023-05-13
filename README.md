@@ -9,7 +9,7 @@
 ## Run the app
 - Launch docker container : `docker-compose up -d`
 - Connect to the master container : `docker exec -it spark-master bash`
-- Launch the cluster : `/spark/bin/spark-submit /app/main.py`
+- Launch the cluster : `sh /app/run.sh`
 
 ## Monitoring
 - You can monitor what the jobs on this url : [localhost:4040](http://localhost:4040/)
